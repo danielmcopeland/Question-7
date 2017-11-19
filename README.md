@@ -6,23 +6,32 @@ import java.util.Arrays;
 
 public class Test {
 	
-	static int[] rangeArray = new int[] {0, 0, 0, 0, 0};
-	//T he array that will print out at the end with percentages for each salary range
+	static float[] rangeArray = new float[] {0, 0, 0, 0, 0, 0};
+		//The array showing the # of responses for each salary range
 	
-	static int decimal = 10000;
-	//How many decimal places the data are shown as
-	// 100 = xx% 
-	// 10000 = xx.xx%
+	static float[] percArray = new float[] {0, 0, 0, 0, 0, 0};
+		//The array showing the percentages of responses for each salary range
 	
-	public static void addtoArray(int lower, int higher) {
-		
+	static int[] badArray = new int[] {0, 0, 0, 0, 0, 0};
+		//The array showing the Colazzi's Method and its inaccuracy
+	
+	static float[] badPercArray = new float[] {0, 0, 0, 0, 0, 0};
+		//The array showing the Colazzi's Method percentages of responses for each salary range
+	
+	public static void addtoArray(float lower, float higher) {
+		addtoRangeArray(lower, higher);
+		addtoBadArray(lower, higher);
+	}
+		//passes input ranges to both arrays
+	
+	public static void addtoRangeArray(float lower, float higher) {
 		if (lower > higher) {
 			System.out.println("Error: Start should be less than or equal to rangeEnd");
 		}
 		// Checks if the input ranges are ordered correctly
 		
 		for (int i=0, j=30000; i < rangeArray.length; i++, j+=10000) {
-			// checks the imput for each salary range starting with 30000 - 39999
+			// checks the input for each salary range starting with 30000 - 39999
 			if (lower >= j) {
 					
 				if (higher <= j+10000) {
@@ -30,15 +39,15 @@ public class Test {
 					// a single salary range of the array
 					
 					if (lower-j == (j+10000)-higher) {
-						rangeArray[i] += 100;
+						rangeArray[i] += 1;
 					}
 					// adds 100% to a salary range if the input is 
 					// distributed directly in the middle of the range
 					// i.e. 44000-46000, 45000-45000, 50000-60000
 						
 					else {
-						int low = (lower+higher)/2 -5000;
-						int high = (lower+higher)/2 +5000;
+						float low = (lower+higher)/2 -5000;
+						float high = (lower+higher)/2 +5000;
 						addtoArray(low, high);
 						break;
 					}
@@ -48,10 +57,10 @@ public class Test {
 					// this provides for more accurate data when put on a graph
 				}
 					
-				if (lower < j+10000) {
-					int total = higher - lower;
-					int lowdif = j+10000 - lower;
-					int perc = (lowdif*decimal)/total;
+				else if (lower < j+10000) {
+					float total = higher - lower;
+					float lowdif = j+10000 - lower;
+					float perc = (lowdif)/total;
 					rangeArray[i]+= perc;
 				}
 				// if lowest part of an input range falls within a salary range,
@@ -59,31 +68,137 @@ public class Test {
 			}
 				
 			else if (higher >= j+10000) {
-				int total = higher - lower;
-				int perc = (10000*decimal)/total;
+				float total = higher - lower;
+				float perc = (10000)/total;
 				rangeArray[i]+= perc;
 			}
 			// if 
 			
 			else if (higher > j && higher <= j+10000) {
-				int total = higher - lower;
-				int highdif = higher - j;
-				int perc = (highdif*decimal)/total;
+				float total = higher - lower;
+				float highdif = higher - j;
+				float perc = (highdif)/total;
 				rangeArray[i]+= perc;
 			}
 		}
 	}
-	public static void printArray() {
-		System.out.println("30,000 - 39,999 = " + rangeArray[0]);
-		System.out.println("40,000 - 49,999 = " + rangeArray[1]);
-		System.out.println("50,000 - 59,999 = " + rangeArray[2]);
-		System.out.println("60,000 - 69,999 = " + rangeArray[3]);
-		System.out.println("70,000 - 79,999 = " + rangeArray[4]);
+		//passes input ranges to rangeArray
+	
+	public static void addtoBadArray(float lower, float higher) {
+		if (lower > higher) {
+			System.out.println("Error: Start should be less than or equal to rangeEnd");
+		}
+		for (int i=0, j=30000; i < badArray.length; i++, j+=10000) {
+				if (lower >= j) {
+					if (lower < j+10000) {
+					badArray[i]++;
+					}
+				}
+				else if (higher > j) {
+					badArray[i]++;
+				}
+			}
 	}
+		//passes input ranges to badArray
+	
+	public static void addRangePerc() {
+		float total = rangeTotalCheck();
+		for (int i=0; i < rangeArray.length; i++) {
+			percArray[i] = rangeArray[i]*100/total;
+		}
+	}
+		//populates range percentages array
+	
+	public static void addBadPerc() {
+		float total = badTotalCheck();
+		for (int i=0; i < badArray.length; i++) {
+			badPercArray[i] = badArray[i]*100/total;
+		}
+	}
+		//Populates bad bercentages array
+	
+	public static void printArray() {
+		addRangePerc();
+		addBadPerc();
+		for (int i=0, j=30; i < rangeArray.length; i++, j+=10) {
+			System.out.println(j + ",000 - " +(j+9)+ ",999 = " + badArray[i] + ", " + badPercArray[i] + "%" + ", " + rangeArray[i] + ", " + percArray[i] + "%");
+		}
+		System.out.println("Totals: Colazzi's: " + badTotalCheck() + ", Mine: " + rangeTotalCheck());
+	}
+		//calls addBadPerc() and addRangePerc() then prints the organized data to the console for comparison
+	
+	public static float badTotalCheck() {
+		float total = 0;
+		for (float s : badArray) {
+			total += s;
+		}
+		return total;
+	}
+		//calculates the total data points of Colazzi's Method
+	
+	public static float rangeTotalCheck() {
+		float total = 0;
+		for (float s : rangeArray) {
+			total += s;
+		}
+		return total;
+	}
+		//calculates the total number of inputs (through my method)
+	
+	public static void clearArrays() {
+		for (int i=0; i<rangeArray.length; i++) {
+			rangeArray[i] = 0;
+		}
+		
+		for (int i=0; i<badArray.length; i++) {
+			badArray[i] = 0;
+		}
+		
+		for (int i=0; i<percArray.length; i++) {
+			percArray[i] = 0;
+		}
+		
+		for (int i=0; i<badPercArray.length; i++) {
+			badPercArray[i] = 0;
+		}
+	}
+	
 	public static void main(String[] args) {
+		addtoArray(60000, 60000);
+		addtoArray(40000, 50000);
+		addtoArray(46000, 55000);
+		addtoArray(43680, 43680);
+		addtoArray(43535, 69635);
+		addtoArray(36000, 48000);
+		addtoArray(50000, 50000);
+		addtoArray(38000, 57000);
+		addtoArray(50000, 60000);
+		addtoArray(45000, 50000);
 		addtoArray(40000, 45000);
-		addtoArray(40000, 70000);
+		addtoArray(32000, 38000);
+		addtoArray(45000, 50000);
+		addtoArray(40000, 45000);
+		printArray();
+		clearArrays();
+		System.out.println();
+		addtoArray(80000, 85000);
+		addtoArray(45000, 50000);
 		addtoArray(40000, 40000);
+		addtoArray(45000, 55000);
+		addtoArray(35000, 35000);
+		addtoArray(60000, 80000);
+		addtoArray(45000, 45000);
+		addtoArray(30000, 50000);
+		addtoArray(50000, 75000);
+		addtoArray(70000, 70000);
+		addtoArray(60000, 70000);
+		addtoArray(40000, 45000);
+		addtoArray(40000, 50000);
+		addtoArray(50000, 60000);
+		addtoArray(50000, 60000);
+		addtoArray(70000, 85000);
+		addtoArray(45000, 55000);
+		addtoArray(50000, 60000);
 		printArray();
 	}
 
