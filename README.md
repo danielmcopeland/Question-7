@@ -64,7 +64,7 @@ public class Test {
 					rangeArray[i]+= perc;
 				}
 				// if lowest part of an input range falls within a salary range,
-				// calcuates the percentage of the input range to add to the salary range
+				// calculates the percentage of the input range to add to the salary range
 			}
 				
 			else if (higher >= j+10000) {
@@ -72,7 +72,8 @@ public class Test {
 				float perc = (10000)/total;
 				rangeArray[i]+= perc;
 			}
-			// if 
+			// if the input range contains a salary range completely,
+			// calculates the percentage of the input range to add to the salary range
 			
 			else if (higher > j && higher <= j+10000) {
 				float total = higher - lower;
@@ -80,6 +81,8 @@ public class Test {
 				float perc = (highdif)/total;
 				rangeArray[i]+= perc;
 			}
+			// if highest part of an input range falls within a salary range,
+			// calculates the percentage of the input range to add to the salary range
 		}
 	}
 		//passes input ranges to rangeArray
@@ -115,7 +118,7 @@ public class Test {
 			badPercArray[i] = badArray[i]*100/total;
 		}
 	}
-		//Populates bad bercentages array
+		//populates bad badpercentages array
 	
 	public static void printArray() {
 		addRangePerc();
@@ -162,6 +165,7 @@ public class Test {
 			badPercArray[i] = 0;
 		}
 	}
+	//Clears the arrays
 	
 	public static void main(String[] args) {
 		addtoArray(60000, 60000);
@@ -203,3 +207,4 @@ public class Test {
 	}
 
 }
+
